@@ -1,0 +1,4 @@
+{
+    "cornflakes.linter.executablePath": "/Users/mailyle/repos/bachelor-arbeit/appreciate-u-backend/app/.flake8",
+    "python.linting.flake8Enabled": true
+}

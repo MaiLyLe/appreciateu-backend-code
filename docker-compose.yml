@@ -9,8 +9,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
+      - "587:587"
     volumes:
       - ./app:/app
+      - ./csv_model_files:/csv_model_files
     command: >
       sh -c "python manage.py wait_for_db &&
              python manage.py migrate &&
@@ -22,9 +24,39 @@ services:
       - DB_PASS=supersecretpassword
     depends_on:
       - db
+      - redis
   db:
     image: postgres:10-alpine
     environment:
       - POSTGRES_DB=app
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=supersecretpassword
+  redis:
+    image: redis:alpine
+  celery:
+    image: celery:3.1.25
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    command: celery -A app worker -l info
+    volumes:
+      - ./app:/app
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=dbaa1_i7%*3r9-=z-+_mz4r-!qeed@(-a_r(g@k8jo8y3r27%m
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+    depends_on:
+      - redis
+  celery-beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: celery -A app beat -l info
+    volumes:
+      - ./app:/app
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=dbaa1_i7%*3r9-=z-+_mz4r-!qeed@(-a_r(g@k8jo8y3r27%m
+      - DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]
+    depends_on:
+      - redis

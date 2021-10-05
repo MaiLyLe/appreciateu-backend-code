@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
+from celery.schedules import crontab
+import core.tasks
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -38,9 +41,56 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'rest_framework',
     'core',
+    'message',
+    'googlecontact',
+    'messagestatistics',
+    'useradministration',
+    'user.apps.UserConfig',
+    'rest_framework.authtoken',
+    'django_crontab'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle'
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '10/second',
+        'user': '1000/day'
+    },
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated'
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 5
+}
+
+SIMPLE_JWT = {  
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=25),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+    'VERIFYING_KEY': None,
+    'ISSUER': None,
+    'AUDIENCE': None,
+    'AUTH_HEADER_TYPES': ('Bearer','JWT'),
+    'USER_AUTHENTICATION_RULE': 'rest_framework_simplejwt.authentication.default_user_authentication_rule',
+    'USER_ID_FIELD': 'id',
+    'USER_ID_CLAIM': 'id',
+    'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
+    'TOKEN_TYPE_CLAIM': 'token_type',
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -72,6 +122,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'app.wsgi.application'
 
+#TEST_RUNNER = 'test_utils.runner.DbTestRunner'
+
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -87,7 +139,7 @@ DATABASES = {
 }
 
 # Password validation
-# https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
+# https://docs.#djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -122,6 +174,49 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
 
-AUTH_USER_MODEL = "core.User"
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = '/vol/web/media'
+STATIC_ROOT = '/vol/web/static'
+
+AUTH_USER_MODEL = 'core.User'
+
+
+CELERY_BROKER_URL = "redis://redis:6379"
+CELERY_RESULT_BACKEND = "redis://redis:6379"
+
+
+CELERY_BEAT_SCHEDULE = {
+    "sample_task": {
+        "task": "core.tasks.sample_task",
+        "schedule": crontab(minute="*/1"),
+    },
+    "del_courses_on_semester_start_and_inform_summer": {
+        "task": "core.tasks.delete_courses",
+        "schedule": crontab(0, 0, day_of_month='1', month_of_year='4'),               
+    },
+    "del_courses_on_semester_start_and_inform_winter": {
+        "task": "core.tasks.delete_courses",
+        "schedule": crontab(0, 0, day_of_month='1', month_of_year='10'),               
+    },
+    "del_students_on_semester_start_and_inform_summer": {
+        "task": "core.tasks.delete_students_upon_drop_out",
+        "schedule": crontab(0, 0, day_of_month='1', month_of_year='4'),               
+    },
+    "del_students_on_semester_start_and_inform_winter": {
+        "task": "core.tasks.delete_students_upon_drop_out",
+        "schedule": crontab(0, 0, day_of_month='1', month_of_year='10'),               
+    },
+}
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 524288000
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'appreciateutestemail@gmail.com'
+EMAIL_HOST_PASSWORD = '7AF7E96C-C792-431C-B5E2-E253BA951330'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
