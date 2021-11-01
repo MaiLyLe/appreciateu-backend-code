@@ -8,6 +8,9 @@ class Command(BaseCommand):
     help = "Delete students whose approx_exit_semester date has passed"
 
     def handle(self, *args, **options):
+        """Command to delete all students if their approx_exit_semester has passed and sends
+        information email
+        - is called by Redis/Celery every start of semester which is 1th Apr. and 1th Oct."""
         today = timezone.now()
         from_address = None
         subject = 'Course deletion upon semester start - AppreciateU'
@@ -20,7 +23,7 @@ class Command(BaseCommand):
 
         all_students = apps.get_model('core', 'Student').objects.all()
         for student in all_students.iterator():
-            if student.approx_exit_semester is not None: 
+            if student.approx_exit_semester is not None:
                 if student.approx_exit_semester < today:
                     student.user.delete()
                     greeting = f'Hello, {student.user.name}\n!'

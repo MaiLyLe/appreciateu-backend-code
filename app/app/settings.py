@@ -13,7 +13,6 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 from celery.schedules import crontab
-import core.tasks
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -29,7 +28,7 @@ SECRET_KEY = '$^#668-+k75ma=@9^)&ot$pf6@@&&e&)_et0a@nyixh5w8*^4u'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['10.0.2.2', 'localhost']
 
 
 # Application definition
@@ -45,10 +44,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'core',
     'message',
-    'googlecontact',
-    'messagestatistics',
-    'useradministration',
-    'user.apps.UserConfig',
+    'google_contact',
+    'message_statistics',
+    'user_administration',
+    'user_recommendation',
+    'token_authentication',
     'rest_framework.authtoken',
     'django_crontab'
 ]
@@ -58,10 +58,6 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle'
     ],
-    'DEFAULT_THROTTLE_RATES': {
-        'anon': '10/second',
-        'user': '1000/day'
-    },
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
 
@@ -74,8 +70,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {  
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
-    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=25),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=20),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': False,
     'ALGORITHM': 'HS256',
@@ -95,7 +91,7 @@ SIMPLE_JWT = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
+    'django.middleware.common.CommonMiddleware',    
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -189,25 +185,21 @@ CELERY_RESULT_BACKEND = "redis://redis:6379"
 
 
 CELERY_BEAT_SCHEDULE = {
-    "sample_task": {
-        "task": "core.tasks.sample_task",
-        "schedule": crontab(minute="*/1"),
-    },
     "del_courses_on_semester_start_and_inform_summer": {
         "task": "core.tasks.delete_courses",
-        "schedule": crontab(0, 0, day_of_month='1', month_of_year='4'),               
+        "schedule": crontab(0, 0, day_of_month='1', month_of_year='4'),
     },
     "del_courses_on_semester_start_and_inform_winter": {
         "task": "core.tasks.delete_courses",
-        "schedule": crontab(0, 0, day_of_month='1', month_of_year='10'),               
+        "schedule": crontab(0, 0, day_of_month='1', month_of_year='10'),
     },
     "del_students_on_semester_start_and_inform_summer": {
         "task": "core.tasks.delete_students_upon_drop_out",
-        "schedule": crontab(0, 0, day_of_month='1', month_of_year='4'),               
+        "schedule": crontab(0, 0, day_of_month='1', month_of_year='4'),
     },
     "del_students_on_semester_start_and_inform_winter": {
         "task": "core.tasks.delete_students_upon_drop_out",
-        "schedule": crontab(0, 0, day_of_month='1', month_of_year='10'),               
+        "schedule": crontab(0, 0, day_of_month='1', month_of_year='10'),
     },
 }
 
@@ -216,7 +208,7 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 524288000
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'appreciateutestemail@gmail.com'
-EMAIL_HOST_PASSWORD = '7AF7E96C-C792-431C-B5E2-E253BA951330'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False

@@ -6,11 +6,13 @@ from django.conf import settings
 import uuid
 import os
 
+
 def user_image_file_path(instance, filename):
-    """Generate file path for new recipe image"""
+    """Generate file path for user image"""
     ext = filename.split('.')[-1]
     filename = f'{uuid.uuid4()}.{ext}'
     return os.path.join('uploads/userimage/', filename)
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
@@ -44,7 +46,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     google_email = models.CharField(max_length=255, blank=True)
     google_last_updated = models.DateTimeField(default=now)
     is_professor = models.BooleanField(default=False)
-    is_university_administrator = models.BooleanField(default=False)
     avatar_num = models.CharField(max_length=3, default="1")
     user_image = models.ImageField(null=True, upload_to=user_image_file_path)
     objects = UserManager()
@@ -60,7 +61,7 @@ class Institute(models.Model):
 
 
 class FieldOfStudies(models.Model):
-    """Represents a specific direction of 
+    """Represents a specific direction of
     studies with various courses matching this field"""
     name = models.CharField(max_length=1000, unique=True)
     institute = models.ForeignKey(Institute, on_delete=models.CASCADE, null=True)
@@ -71,13 +72,12 @@ class FieldOfStudies(models.Model):
 
 class GoogleContact(models.Model):
     """Represents a google connection between two users"""
-    last_updated = models.DateTimeField(default=now, blank=True)
     contact_owner = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                      related_name='google_identity',
+                                      related_name='google_connections_from',
                                       null=True,
                                       on_delete=models.CASCADE)
     owned_contact = models.ForeignKey(settings.AUTH_USER_MODEL,
-                                      related_name='owned_google_contact',
+                                      related_name='google_conntections_to',
                                       null=True,
                                       on_delete=models.CASCADE)
 
@@ -126,25 +126,10 @@ class Professor(models.Model):
         return self.user.name
 
 
-class UniversityAdministrator(models.Model):
-    """Model representing a uni administrator with one connected user object, not used so far"""
-    user = models.OneToOneField(User,
-                                on_delete=models.CASCADE
-                                )
-    institute = models.ForeignKey(Institute,
-                                  on_delete=models.CASCADE, null=True)
-    part_of_institute = models.BooleanField(default=False)
-    profession_description = models.CharField(max_length=1000, null=True)
-
-    def __str__(self):
-        return self.user.name
-
-
 class Message(models.Model):
     """Model representing a message with a sender and a receiver that is a user"""
     text = models.CharField(max_length=2000)
     timestamp = models.DateTimeField(auto_now_add=False, default=now)
-    thanked = models.BooleanField(default=False)
     is_seen = models.BooleanField(default=False)
     sender = models.ForeignKey(settings.AUTH_USER_MODEL,
                                related_name='messages_sent',

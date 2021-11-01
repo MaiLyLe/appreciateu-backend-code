@@ -1,5 +1,4 @@
 FROM python:3.8-alpine
-
 #PYTHONUNBUFFERED ensures that output are sent straight to terminal
 ENV PYTHONUNBUFFERRED 1 
 
@@ -14,9 +13,9 @@ RUN apk add --update --no-cache --virtual .tmp-build-deps  \
 RUN pip install -r /requirements.txt
 RUN apk del .tmp-build-deps
 
-RUN mkdir /csv_model_files
-WORKDIR /csv_model_files
-COPY ./csv_model_files /csv_model_files
+# RUN mkdir /csv_model_files
+# WORKDIR /csv_model_files
+# COPY ./csv_model_files /csv_model_files
 
 RUN mkdir /app
 WORKDIR /app

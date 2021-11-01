@@ -9,6 +9,8 @@ class Command(BaseCommand):
     help = "Delete students and profs connected to courses on semester start"
 
     def handle(self, *args, **options):
+        """Command to delete all students' and professors' connection to courses
+        called by Redis/Celery every start of semester which is 1th Apr. and 1th Oct."""
         today = timezone.now()
         subject = 'We deleted your account upon your estimated university exit - AppreciateU'
         from_address = None

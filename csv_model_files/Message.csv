@@ -1,9 +1,0 @@
-text,thanked,sender,receiver,avatar_num
-I really liked your class!,True ,john.wayne.student@htw.com,otto.mueller.professor@htw.com,2
-"I just went to one of your lectures on alternatives to representational democracy and it was amazing. In the next life, I might just study something with politics instead of informatics.",True ,john.wayne.student@htw.com,Rea.Saunders.professor@htw.com,3
-"Thanks a lot, mate.",False ,suen.lee.student@htw.com,john.wayne.student@htw.com,7
-You really rock. You are an amazing professor.,False ,suen.lee.student@htw.com,mohammed.chehade.professor@htw.com,4
-You classes are so well explained. Thank you. ,True ,liwei.chen.student@htw.com,otto.mueller.professor@htw.com,5
-Nice presentation.,True ,otto.mueller.professor@htw.com,john.wayne.student@htw.com,1
-Thanks for substituting me. The students said they liked your style of explaining. Maybe I need a class in teaching from you too. ,False ,otto.mueller.professor@htw.com,bronte.huff.professor@htw.com,6
-"Man, I appreciate you writing extra notes for me when I was sick in the math class.",True ,john.wayne.student@htw.com,sarah.johnson.student@htw.com,8

@@ -22,7 +22,7 @@ class UserAdmin(BaseUserAdmin):
                     'is_professor',
                     'google_email',
                     'google_last_updated',
-                    'is_university_administrator',
+                    'entry_semester'
                     'avatar_num',
                     'user_image'
                 )
@@ -41,7 +41,6 @@ class UserAdmin(BaseUserAdmin):
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.Student)
 admin.site.register(models.Professor)
-admin.site.register(models.UniversityAdministrator)
 admin.site.register(models.FieldOfStudies)
 admin.site.register(models.Institute)
 admin.site.register(models.Course)

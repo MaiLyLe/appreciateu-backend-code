@@ -1,9 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from core import models
-from datetime import timedelta
-from django.utils import timezone
-
 
 
 def sample_user(email="student@test.com",
@@ -131,19 +128,6 @@ class ModelTest(TestCase):
         message_1_text = "You are awesome"
         message_2_text = "I love your classes."
         message_3_text = "Thanks for the notes."
-        time_threshold_max = timezone.now() - timedelta(days=0)
-        time_threshold_min = timezone.now() - timedelta(days=0+1)
-
-        print(time_threshold_min.replace(hour=0, minute=0, second=0, microsecond=0))
-        print(time_threshold_max.replace(hour=0, minute=0, second=0, microsecond=0))
-
-        test = timezone.now() - timedelta(days=7)
-        print(test)
-        print(timezone.now() - timedelta(days=8)
-)
-
-            
-
         first_message = models.Message.objects.create(text=message_1_text,
                                                       sender=sender,
                                                       receiver=receiver_prof)

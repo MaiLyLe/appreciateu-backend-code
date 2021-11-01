@@ -1,3 +1,4 @@
+# configuration file for Celery middleware that creates task queues
 import os
 
 from celery import Celery
