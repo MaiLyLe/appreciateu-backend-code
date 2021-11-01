@@ -5,7 +5,8 @@ from django.db import connections
 
 
 class Command(BaseCommand):
-    """Command to wait for db to start before running server"""
+    """Command to wait for db to start before running server
+    Code is taken from https://www.udemy.com/course/django-python-advanced/"""
     def handle(self, *args, **kwargs):
         self.stdout.write('Waiting for DB Connection...')
         db_connection = None

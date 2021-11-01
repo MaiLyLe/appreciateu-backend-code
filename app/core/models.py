@@ -8,7 +8,8 @@ import os
 
 
 def user_image_file_path(instance, filename):
-    """Generate file path for user image"""
+    """Generate file path for user image
+    Code is taken from udemy course https://www.udemy.com/course/django-python-advanced/"""
     ext = filename.split('.')[-1]
     filename = f'{uuid.uuid4()}.{ext}'
     return os.path.join('uploads/userimage/', filename)
@@ -16,7 +17,8 @@ def user_image_file_path(instance, filename):
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None, **extra_fields):
-        """Creates and saves new user"""
+        """Creates and saves new user
+        https://www.udemy.com/course/django-python-advanced/"""
         if not email:
             raise ValueError("User must register with email address")
         user = self.model(email=self.normalize_email(email), **extra_fields)
@@ -25,7 +27,8 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password):
-        """Creates and saves a new super user"""
+        """Creates and saves a new super user
+        https://www.udemy.com/course/django-python-advanced/"""
         if not email:
             raise ValueError("User must register with email address")
         user = self.create_user(email, password)
@@ -37,7 +40,8 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    """Custom user model that supports using email instead of username"""
+    """Custom user model that supports using email instead of username
+    par of the code is taken from https://www.udemy.com/course/django-python-advanced/"""
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     is_active = models.BooleanField(default=True)

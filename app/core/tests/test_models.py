@@ -2,6 +2,8 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from core import models
 
+"""Part of this code is taken from https://www.udemy.com/course/django-python-advanced/"""
+
 
 def sample_user(email="student@test.com",
                 password="password123",

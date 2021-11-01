@@ -1,5 +1,6 @@
-version: "3"
+#Part of this code is taken from https://www.udemy.com/course/django-python-advanced/
 
+version: "3"
 services:
   app:
     stdin_open: true # docker run -i
